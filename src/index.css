@@ -1,3 +1,7 @@
+.main_container {
+  height: 100vh;
+  width: 100vw;
+}
 .tooltip * {
   margin: 0;
 }
@@ -14,6 +18,11 @@
   flex-direction: column;
   justify-content: center;
   z-index: 99;
+  margin: 40px;
+}
+
+.chartBox {
+  margin: 30px;
 }
 
 .container button {

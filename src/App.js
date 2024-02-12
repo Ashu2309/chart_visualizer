@@ -19,6 +19,7 @@ const App = props => {
   const myChart = useRef();
   const myToolTip = useRef();
 
+
   //toggle button functions
   const toggleSeriesVisibility = (seriesName) => {
     setSeriesVisibility(prevState => ({
@@ -90,6 +91,7 @@ const App = props => {
 
   useEffect(() => {
     //creating charts
+
     const chart = createChart(myChart.current, {
       layout: {
         background: { type: ColorType.solid, color: backgroundColor },
@@ -99,8 +101,37 @@ const App = props => {
       height: 500,
     });
 
+    chart.applyOptions({
+      rightPriceScale: {
+        scaleMargins: {
+          top: 0.3, // leave some space for the legend
+          bottom: 0.25,
+        },
+      },
+      crosshair: {
+        // hide the horizontal crosshair line
+        horzLine: {
+          visible: false,
+          labelVisible: false,
+        },
+        // hide the vertical crosshair label
+        vertLine: {
+          labelVisible: false,
+        },
+      },
+      // hide the grid lines
+      grid: {
+        vertLines: {
+          visible: false,
+        },
+        horzLines: {
+          visible: false,
+        },
+      },
+    });
+
     //creating area series
-    const newSeries = chart.addAreaSeries({ lineColor: 'blue', topColor: areaTopColor, bottomColor: areaBottomColor });
+    const newSeries = chart.addAreaSeries({ lineColor: 'blue', topColor: areaTopColor, bottomColor: areaBottomColor, });
     const newSeries1 = chart.addAreaSeries({ lineColor, topColor: areaTopColor1, bottomColor: areaBottomColor1 });
     const newSeries2 = chart.addAreaSeries({ lineColor2, topColor: areaTopColor2, bottomColor: areaBottomColor2 });
 
@@ -135,18 +166,41 @@ const App = props => {
         let coordinateX = 0;
 
         //to prevent undefined state error, we will provide coordinates on the basis of active charts
+        // if (seriesVisibility.chart1) {
+        //   coordinateY = newSeries.priceToCoordinate(linePriceData.value)
+        //   coordinateX = param.point.x;
+        // }
+        // else if (seriesVisibility.chart2) {
+        //   coordinateY = newSeries.priceToCoordinate(linePriceData1.value)
+        //   coordinateX = param.point.x;
+        // } else {
+        //   coordinateY = newSeries.priceToCoordinate(linePriceData2.value)
+        //   coordinateX = param.point.x;
+        // }
+
         if (seriesVisibility.chart1) {
-          coordinateY = newSeries.priceToCoordinate(linePriceData.value)
+          coordinateY = param.point.y;
           coordinateX = param.point.x;
         }
         else if (seriesVisibility.chart2) {
-          coordinateY = newSeries.priceToCoordinate(linePriceData1.value)
+          coordinateY = param.point.y;
           coordinateX = param.point.x;
         } else {
-          coordinateY = newSeries.priceToCoordinate(linePriceData2.value)
+          coordinateY = param.point.y;
           coordinateX = param.point.x;
         }
+        // console.log(myChart.current.clientHeight + " " + coordinateY)
 
+        // if (coordinateY > myChart.current.clientHeight - 40 || coordinateX > myChart.current.clientWidth) {
+        //   myToolTip.current.style.opacity = "0";
+        // } else {
+        //   myToolTip.current.style.opacity = "100";
+        // }
+        // if (coordinateY > myChart.current.clientHeight - 40 || coordinateX > myChart.current.clientWidth) {
+        //   myToolTip.current.style.display = "none";
+        // } else {
+        //   myToolTip.current.style.display = "block";
+        // }
         //setting time and price
         setTime(param.time)
         setPrice({ chart1: linePriceData, chart2: linePriceData1, chart3: linePriceData2 })
@@ -161,8 +215,19 @@ const App = props => {
         //setting coordinate to tooltip div
         myToolTip.current.style.left = coordinateX + "px";
         myToolTip.current.style.top = coordinateY + "px";
+
+        if (!seriesVisibility.chart1 && !seriesVisibility.chart2 && !seriesVisibility.chart3 || coordinateY > myChart.current.clientHeight - 40 || coordinateX > myChart.current.clientWidth) {
+          if (myToolTip.current) {
+            myToolTip.current.style.display = "none";
+          }
+        } else {
+          if (myToolTip.current) {
+            myToolTip.current.style.display = "block";
+          }
+        }
       }
     })
+
 
     //this will make our graph filled with screen
     chart.timeScale().fitContent();
@@ -174,23 +239,15 @@ const App = props => {
   }, [seriesVisibility, price])
 
   //to  hide tooltip if no chart is selected or active
-  if (!seriesVisibility.chart1 && !seriesVisibility.chart2 && !seriesVisibility.chart3) {
-    if (myToolTip.current) {
-      myToolTip.current.style.display = "none";
-    }
-  } else {
-    if (myToolTip.current) {
-      myToolTip.current.style.display = "block";
-    }
-  }
+
 
 
 
   return (
 
-    <div>
+    <div className='main_container'>
       {/* chart block */}
-      <div ref={myChart}></div>
+      <div ref={myChart} className='chartBox'></div>
 
       {/* tooltip div */}
       <div ref={myToolTip} className='tooltip'>
