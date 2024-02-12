@@ -189,18 +189,7 @@ const App = props => {
           coordinateY = param.point.y;
           coordinateX = param.point.x;
         }
-        // console.log(myChart.current.clientHeight + " " + coordinateY)
 
-        // if (coordinateY > myChart.current.clientHeight - 40 || coordinateX > myChart.current.clientWidth) {
-        //   myToolTip.current.style.opacity = "0";
-        // } else {
-        //   myToolTip.current.style.opacity = "100";
-        // }
-        // if (coordinateY > myChart.current.clientHeight - 40 || coordinateX > myChart.current.clientWidth) {
-        //   myToolTip.current.style.display = "none";
-        // } else {
-        //   myToolTip.current.style.display = "block";
-        // }
         //setting time and price
         setTime(param.time)
         setPrice({ chart1: linePriceData, chart2: linePriceData1, chart3: linePriceData2 })
